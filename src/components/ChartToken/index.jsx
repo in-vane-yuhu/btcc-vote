@@ -31,7 +31,7 @@ class ChartToken extends Component {
                   </div>
                 </div>
                 <Progress
-                  percent={Number(item.percentage).toFixed(1)}
+                  percent={item.percentage}
                   strokeColor={index > 4 ? '#acb7bc' : '#36cdb5'}
                   status={index > 4 ? null : 'active'}
                 />

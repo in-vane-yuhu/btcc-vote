@@ -124,23 +124,23 @@ export default class GlobalStore {
     this.results = res.results
   }
 
-  @action doVote = async ({ UID, inviter = 'self', tokenID = [] }) => {
+  @action doVote = async ({ UID, inviter = '', tokenID = [] }) => {
     this.submitLoading = true
 
     const variables = {
       UID,
       inviter,
-      tokenID
+      tokenID: this.checkedTokens
     }
     const body = `
       mutation doVote(
         $UID: String!
-        $inviter: String
+        ${inviter ? '$inviter: String' : ''}
         $tokenID: [ID]
       ){
         vote(
           UID:$UID
-          inviter:$inviter
+          ${inviter ? 'inviter:$inviter' : ''}
           tokenID:$tokenID
         ){
           voteSuccess
@@ -166,6 +166,7 @@ export default class GlobalStore {
       this.getAward(UID)
     }
 
+    this.checkedTokens = []
     this.submitLoading = false
     this.hideModal()
   }
