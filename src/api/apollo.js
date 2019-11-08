@@ -11,7 +11,7 @@ const onError = err => {
 }
 
 const client = new ApolloClient({
-  uri: 'http://192.168.1.39:4001/',
+  uri: 'http://119.3.106.151:4001/',
   onError: onError
 })
 
