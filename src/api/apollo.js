@@ -1,29 +1,48 @@
 import ApolloClient, { gql } from 'apollo-boost'
-import errMsg from './error'
+import { message } from 'antd'
+import formatErrorMessage from './error'
+
+message.config({
+  maxCount: 1
+})
 
 const onError = err => {
-  console.log({ onError: err })
+  message.error(formatErrorMessage(err.graphQLErrors[0].message))
 }
 
 const client = new ApolloClient({
-  uri: 'https://graphql.example.com',
+  uri: 'http://192.168.1.39:4001/',
   onError: onError
 })
 
-const query = client
-  .query({
-    query: gql`{}`
-  })
-  .then(res => {
-    console.log({ query: res })
-  })
+const query = async (body, variables) => {
+  message.loading('努力加载中...')
+  return client
+    .query({
+      query: gql`
+        ${body}
+      `,
+      variables
+    })
+    .then(res => {
+      message.destroy()
+      return res.data
+    })
+}
 
-const mutation = client
-  .mutate({
-    mutation: gql`{}`
-  })
-  .then(res => {
-    console.log({ mutation: res })
-  })
+const mutation = async (body, variables) => {
+  message.loading('努力加载中...')
+  return client
+    .mutate({
+      mutation: gql`
+        ${body}
+      `,
+      variables
+    })
+    .then(res => {
+      message.destroy()
+      return res.data
+    })
+}
 
 export { query, mutation }

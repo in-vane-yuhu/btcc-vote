@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Modal, Form, Input, Button, Row, Col } from 'antd'
 import './style.less'
 
-const FormSubmitUID = Form.create({ name: 'form_submit_uid' })(
+const SubmitUID = Form.create({ name: 'form_submit_uid' })(
   class extends Component {
     render() {
       const { visible, onCancel, onSubmit, form, loading } = this.props
@@ -22,11 +22,9 @@ const FormSubmitUID = Form.create({ name: 'form_submit_uid' })(
             <Form.Item>
               {getFieldDecorator('UID', {
                 rules: [{ required: true, message: '请输入UID' }]
-              })(<Input prefix='UID：' />)}
+              })(<Input className='input-UID' prefix='UID：' />)}
             </Form.Item>
-            <Form.Item>
-              {getFieldDecorator('inviter')(<Input prefix='邀请人：' readOnly />)}
-            </Form.Item>
+            
             <Row className='tip'>
               <span className='uid'>没有UID？</span>
               <span className='app'>下载APP注册</span>
@@ -45,4 +43,4 @@ const FormSubmitUID = Form.create({ name: 'form_submit_uid' })(
   }
 )
 
-export default FormSubmitUID
+export default SubmitUID

@@ -39,13 +39,6 @@
     margin-top: 16px;
   }
 }
-/* share */
-.btn-invite {
-  width: 75%;
-  margin: 16px 0 24px;
-  border-radius: 15px;
-  font-weight: bold;
-}
 /* qr */
 .qrcode {
   margin: 32px 0 24px;
@@ -86,5 +79,32 @@
   .ant-btn {
     border-radius: 20px;
     width: 100%;
+  }
+}
+
+.modal-share {
+  .ant-modal-content {
+    border-radius: 20px;
+  }
+  .ant-modal-header {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom: none;
+  }
+  .ant-modal-body {
+    padding: 48px;
+  }
+  .step {
+    color: #36cdb5;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 16px;
+    span {
+      display: flex;
+      align-items: flex-start;
+      img {
+        height: 25px;
+      }
+    }
   }
 }

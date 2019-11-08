@@ -8,30 +8,32 @@
   margin: 0 auto;
   background: #fff;
 
-  .checkItem {
+  .item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 16px 0;
     border-bottom: 1px solid rgba(232, 232, 232, 0.4);
   }
-  .checkItem:nth-last-child(1) {
+  .item:nth-last-child(1) {
     border-bottom: none;
   }
-  .checkItem-left {
+  .left {
     display: flex;
-    div {
+    .context {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      max-width: 80%;
+      .token {
+        color: #31353f;
+        font-weight: bold;
+      }
+      .desc {
+        color: #9a9a9a;
+        text-align: left;
+      }
     }
-  }
-  .checkItem-token {
-    color: #31353f;
-    font-weight: bold;
-  }
-  .checkItem-desc {
-    color: #9a9a9a;
   }
   /* .ant-checkbox-inner {
     border-radius: 50%;

@@ -1,9 +1,8 @@
-let errMsg = message => {
+let formatErrorMessage = message => {
   let text = ''
   switch (message) {
-    // 其他模块
-    case 'article title can not be empty':
-      text = '资讯标题内容不能为空'
+    case 'A unique constraint would be violated on User. Details: Field name = UID':
+      text = '您已经投过票了'
       break
 
     default:
@@ -13,4 +12,4 @@ let errMsg = message => {
   return text
 }
 
-export default errMsg
+export default formatErrorMessage

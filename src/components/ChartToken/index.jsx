@@ -9,24 +9,32 @@ import mockAvatarSrc from '../../assets/icon.jpg'
 @observer
 class ChartToken extends Component {
   render() {
-    const { isVote, tokens } = this.props.GlobalStore
-    return isVote ? (
+    const { UID, results } = this.props.GlobalStore
+    return UID ? (
       <Row className='chart'>
         <Card className='card'>
-          {tokens.map((item, index) => (
+          {results.map((item, index) => (
             <Row className='item' key={index}>
               <Col className='left' span={3}>
-                <span>{`${index + 1}.`}</span>
+                <span
+                  style={{
+                    color: index > 4 ? '#acb7bc' : '#36cdb5'
+                  }}
+                >{`${index + 1}.`}</span>
               </Col>
               <Col className='right' span={21}>
                 <div className='info'>
                   <Avatar size={40} src={mockAvatarSrc} />
                   <div className='context'>
-                    <span className='token'>BTC</span>
-                    <span className='desc'>here is some desc</span>
+                    <span className='token'>{item.tokenName || '-'}</span>
+                    <span className='desc'>{item.tokenIntroduction || '-'}</span>
                   </div>
                 </div>
-                <Progress percent={item.percent} strokeColor='#36cdb5' status='active' />
+                <Progress
+                  percent={Number(item.percentage).toFixed(1)}
+                  strokeColor={index > 4 ? '#acb7bc' : '#36cdb5'}
+                  status={index > 4 ? null : 'active'}
+                />
               </Col>
             </Row>
           ))}

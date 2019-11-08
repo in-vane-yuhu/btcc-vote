@@ -1,5 +1,5 @@
-import React, { Component, Fragment } from 'react'
-import { message, Row, Empty, Spin, Card, Icon } from 'antd'
+import React, { Component } from 'react'
+import { Row, Empty, Spin, Card, Icon } from 'antd'
 import InfiniteScroll from 'react-infinite-scroller'
 import { observer, inject } from 'mobx-react'
 import './style.less'
@@ -8,36 +8,41 @@ import './style.less'
 @observer
 class AwardList extends Component {
   handleInfiniteOnLoad = () => {
-    const { awards, getAward } = this.props.GlobalStore
-
-    if (awards.length > 14) {
-      message.success('奖励已经全部加载完啦')
-      return
-    }
+    const { getAward } = this.props.GlobalStore
     getAward()
   }
 
   renderTitle = () => {
-    const { isVote, awards } = this.props.GlobalStore
-    return isVote ? (
-      <span className='my-award'>我的奖励（{awards.length}）</span>
+    const { UID, awards, showAwards } = this.props.GlobalStore
+    return UID ? (
+      <span className='my-award'>我的奖励({awards.length})</span>
     ) : (
-      <div
-        onClick={() => {
-          message.warn('请先投票')
-        }}
-      >
+      <div onClick={showAwards}>
         <span className='search-award'>查看奖励</span>
         <Icon type='right' />
       </div>
     )
   }
 
+  renderExtra = () => {
+    const { UID, resetUID } = this.props.GlobalStore
+    return UID ? (
+      <span className='switch-user' onClick={resetUID}>
+        切换
+      </span>
+    ) : null
+  }
+
   render() {
     const { awards, awardLoading } = this.props.GlobalStore
     return (
       <Row className='award'>
-        <Card className='card' title={this.renderTitle()} bordered={false}>
+        <Card
+          className='card'
+          title={this.renderTitle()}
+          bordered={false}
+          extra={this.renderExtra()}
+        >
           <div className='infinite'>
             <InfiniteScroll
               initialLoad={false}
@@ -48,10 +53,15 @@ class AwardList extends Component {
             >
               {awards.map((item, index) => (
                 <div className='item' key={index}>
-                  <span>投票</span>
-                  <span>XX BTCT</span>
+                  <span>{item.type}</span>
+                  <span>{`${item.awards} BTCT`}</span>
                 </div>
               ))}
+              {awards.length !== 0 && (
+                <div className='nomore'>
+                  <span>没有更多了</span>
+                </div>
+              )}
               {awards.length === 0 && (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={false} />
               )}

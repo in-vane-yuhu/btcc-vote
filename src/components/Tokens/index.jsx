@@ -1,58 +1,47 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import { observer, inject } from 'mobx-react'
 import './style.less'
 
-import { Button, Checkbox, message, Avatar, Row, Empty, Icon } from 'antd'
+import { Button, Checkbox, message, Avatar, Row, Empty } from 'antd'
 
 import mockAvatarSrc from '../../assets/icon.jpg'
 
 @inject('GlobalStore')
 @observer
 class Tokens extends Component {
-  state = {
-    checkedValue: []
-  }
-
   componentDidMount = async () => {
     const { getTokens } = this.props.GlobalStore
     getTokens()
   }
 
-  onCheckChange = checkedValue => {
-    this.setState({
-      checkedValue
-    })
-  }
-
   onCheckCount = () => {
-    const { checkedValue } = this.state
-    const { showModal } = this.props.GlobalStore
-    if (checkedValue.length < 5) {
-      message.warn(`请选择5个`)
+    const { showModal, checkedTokens } = this.props.GlobalStore
+    if (checkedTokens.length < 5) {
+      message.warn(`请选择5个空气币以投票`)
       return
     }
-    if (checkedValue.length > 5) {
-      message.warn('只能选择5个')
+    if (checkedTokens.length > 5) {
+      message.warn('只能选择5个空气币投票')
       return
     }
     showModal()
   }
 
   render() {
-    const { tokens, isVote } = this.props.GlobalStore
-    return isVote ? null : (
+    const { tokens, UID, checkTokens } = this.props.GlobalStore
+    return UID ? null : (
       <Row className='check-container'>
-        <Checkbox.Group onChange={this.onCheckChange} style={{ width: '100%' }}>
+        <Checkbox.Group onChange={checkTokens} style={{ width: '100%' }}>
           {tokens.map((item, index) => (
-            <div key={index} className='checkItem'>
-              <div className='checkItem-left'>
+            <div key={index} className='item'>
+              <div className='left'>
                 <Avatar size={40} src={mockAvatarSrc} />
-                <div style={{ marginLeft: 10 }}>
-                  <span className='checkItem-token'>BTC</span>
-                  <span className='checkItem-desc'>here is some desc</span>
+                <div className='context' style={{ marginLeft: 10 }}>
+                  <span className='token'>{item.tokenName || '-'}</span>
+                  <span className='desc'>{item.tokenIntroduction || '-'}</span>
                 </div>
               </div>
-              <Checkbox value={index} />
+              <Checkbox value={item.tokenID} />
             </div>
           ))}
           {tokens.length === 0 && <Empty description={false} />}

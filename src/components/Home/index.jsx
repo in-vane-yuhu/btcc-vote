@@ -3,15 +3,19 @@ import { observer, inject } from 'mobx-react'
 import './style.less'
 
 import wx from 'weixin-js-sdk'
-import { Row, Col, Button, message, Icon, Modal } from 'antd'
+import { Row, Col, Button, message, Modal } from 'antd'
 
 import ChartToken from '../ChartToken'
 import Tokens from '../Tokens'
-import FormSubmitUID from '../FormSubmitUID'
+import FormVote from '../FormVote'
+import FormAwards from '../FormAwards'
+import ShareBar from '../ShareBar'
 import AwardList from '../AwardList'
 
 import mockAvatarSrc from '../../assets/icon.jpg'
 import mockQR from '../../assets/qrcode.png'
+import moments from '../../assets/moments.png'
+import share from '../../assets/share.png'
 
 @inject('GlobalStore')
 @observer
@@ -21,8 +25,15 @@ class Home extends Component {
   }
 
   componentDidMount = async () => {
-    const { getTokens } = this.props.GlobalStore
-    getTokens()
+    const { getTokens, getResults, getAward, getUID } = this.props.GlobalStore
+    const UID = localStorage['UID']
+    if (UID) {
+      getResults()
+      getAward(UID)
+      getUID()
+    } else {
+      getTokens()
+    }
 
     const configData = {
       timestamp: 1571880098,
@@ -63,12 +74,6 @@ class Home extends Component {
     })
   }
 
-  onCheckChange = checkedValue => {
-    this.setState({
-      checkedValue
-    })
-  }
-
   onCheckCount = () => {
     const { checkedValue } = this.state
     const { showModal } = this.props.GlobalStore
@@ -83,42 +88,14 @@ class Home extends Component {
     showModal()
   }
 
-  submitModal = () => {
-    const { form } = this.formRef.props
-    const { doVote } = this.props.GlobalStore
-    form.validateFields((err, values) => {
-      if (err) {
-        return
-      }
-      doVote(values)
-    })
-  }
-
-  saveFormRef = formRef => {
-    this.formRef = formRef
-  }
-
-  renderFormSubmitUID = () => {
-    const { isModalVisibal, submitLoading, hideModal } = this.props.GlobalStore
-    return (
-      <FormSubmitUID
-        wrappedComponentRef={this.saveFormRef}
-        visible={isModalVisibal}
-        onCancel={hideModal}
-        onSubmit={this.submitModal}
-        loading={submitLoading}
-      />
-    )
-  }
-
   renderModalResponse = () => {
-    const { hideRes, isResVisibal } = this.props.GlobalStore
+    const { hideResults, isResultsVisibal } = this.props.GlobalStore
     return (
       <Modal
         destroyOnClose
         className='modal-response'
-        visible={isResVisibal}
-        onCancel={hideRes}
+        visible={isResultsVisibal}
+        onCancel={hideResults}
         footer={null}
         width={'85%'}
         closable={false}
@@ -128,17 +105,100 @@ class Home extends Component {
           <span>投票完成!</span>
         </Row>
         <Row className='resMsg'>
-          <span>{`您获得 ${'XX'} BTCT 奖励`}</span>
+          <span>{`您获得 20 BTCT 奖励`}</span>
         </Row>
         <Row>
           <Col offset={6} span={12}>
-            <Button type='primary' size='large' onClick={hideRes}>
+            <Button type='primary' size='large' onClick={hideResults}>
               确定
             </Button>
           </Col>
         </Row>
       </Modal>
     )
+  }
+
+  renderModalVoted = () => {
+    const { hideVoted, isVotedVisibal } = this.props.GlobalStore
+    return (
+      <Modal
+        destroyOnClose
+        className='modal-response'
+        visible={isVotedVisibal}
+        onCancel={hideVoted}
+        footer={null}
+        width={'85%'}
+        closable={false}
+        maskClosable={false}
+      >
+        <Row className='resTitle'>
+          <span>您已投过票!</span>
+        </Row>
+        <Row className='resMsg'>
+          <span>您可以邀请好友以获得更多奖励!</span>
+        </Row>
+        <Row>
+          <Col offset={6} span={12}>
+            <Button type='primary' size='large' onClick={hideVoted}>
+              确定
+            </Button>
+          </Col>
+        </Row>
+      </Modal>
+    )
+  }
+
+  renderModalShare = () => {
+    const { hideShare, isShareVisibal } = this.props.GlobalStore
+    return (
+      <Modal
+        destroyOnClose
+        className='modal-share'
+        visible={isShareVisibal}
+        onCancel={hideShare}
+        footer={null}
+        width={'85%'}
+        closable={false}
+      >
+        <Row className='step'>
+          <Col span={3}>
+            <span>1.</span>
+          </Col>
+          <Col>
+            <span>点击右上角</span>
+          </Col>
+        </Row>
+        <Row className='step'>
+          <Col span={3}>
+            <span>2.</span>
+          </Col>
+          <Col>
+            <span>
+              点击
+              <img src={share} alt='share.png' />
+              发送给朋友
+            </span>
+          </Col>
+        </Row>
+        <Row className='step'>
+          <Col offset={3}>
+            <span>
+              或
+              <img src={moments} alt='moments.png' />
+              分享到朋友圈
+            </span>
+          </Col>
+        </Row>
+      </Modal>
+    )
+  }
+
+  renderFormVote = () => {
+    return <FormVote />
+  }
+
+  renderFormAwards = () => {
+    return <FormAwards />
   }
 
   render() {
@@ -157,20 +217,18 @@ class Home extends Component {
         </div>
         <ChartToken />
         <Tokens />
-        <Row>
-          <Button className='btn-invite' type='primary' size='large'>
-            邀请好友投票可获得更多奖励
-            <Icon type='right' />
-          </Button>
-        </Row>
+        <ShareBar />
         <AwardList />
         <Row className='qrcode'>
           <div className='add'>加客服好友</div>
           <div className='group'>邀您加入{` BTCC `}群聊</div>
           <img src={mockQR} alt='qrcode' />
         </Row>
-        {this.renderFormSubmitUID()}
+        {this.renderFormVote()}
+        {this.renderFormAwards()}
         {this.renderModalResponse()}
+        {this.renderModalShare()}
+        {this.renderModalVoted()}
       </Fragment>
     )
   }
